@@ -7,7 +7,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { User } from '../entities';
+import { CreateUserDto, UpdatePasswordDto } from '../entities';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -15,27 +15,27 @@ export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
   @Get()
-  getAll(): User[] {
+  getAll() {
     return this.userService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string): User {
+  getOne(@Param('id') id: string) {
     return this.userService.getOne(id);
   }
 
   @Post()
-  create(@Body() body: User): User {
+  create(@Body() body: CreateUserDto) {
     return this.userService.create(body);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): string {
+  delete(@Param('id') id: string) {
     return this.userService.remove(id);
   }
 
   @Put(':id')
-  put(@Param('id') id: string, @Body() body: User): User {
+  put(@Param('id') id: string, @Body() body: UpdatePasswordDto) {
     return this.userService.update(id, body);
   }
 }

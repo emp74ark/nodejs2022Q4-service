@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Database, User } from '../entities';
+import { CreateUserDto, Database, UpdatePasswordDto, User } from '../entities';
+import { v4 as uuid, validate } from 'uuid';
 
 @Injectable()
 export class DatabaseService {
@@ -7,31 +8,79 @@ export class DatabaseService {
     users: [],
   };
 
-  getAllUsers() {
+  async getAllUsers() {
     return this.database.users;
   }
 
-  getUserById(id: string) {
-    return this.database.users.find((user) => user.id === id);
+  async getUserById(id: string) {
+    if (!validate(id)) {
+      return 'Wrong user ID'; // todo: 400
+    }
+
+    const user = this.database.users.find((user) => user.id === id);
+    if (!user) {
+      return 'User not found'; // todo: 404
+    } else {
+      return user; // todo: 200
+    }
   }
 
-  addUser(dto: User) {
-    // todo: generate dto
-    this.database.users.push(dto);
-    return dto;
+  async addUser(dto: CreateUserDto) {
+    if (!('login' in dto) || !('password' in dto)) {
+      return 'Required fields are missed'; // todo: 400
+    }
+
+    const user: User = {
+      ...dto,
+      id: uuid(),
+      version: 0,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    this.database.users.push(user);
+
+    return user; // todo: 201
   }
 
-  updateUser(id: string, dto: User) {
-    // todo: generate dto
-    const updated = this.database.users.map((user) =>
-      user.id === id ? (user = { ...user, ...dto }) : user,
-    );
-    this.database.users = updated;
-    return dto;
+  async updateUserPassword(id: string, dto: UpdatePasswordDto) {
+    if (!validate(id)) {
+      return 'Wrong user ID'; // todo: 400
+    }
+
+    const user = this.database.users.find((user) => user.id === id);
+
+    if (!user) {
+      return 'User not found'; // todo: 404
+    } else if (user.password !== dto.oldPassword) {
+      return 'Wrong password'; // todo: 403
+    } else {
+      this.database.users = this.database.users.map((user) =>
+        user.id === id
+          ? (user = {
+              ...user,
+              password: dto.newPassword,
+              version: user.version + 1,
+              updatedAt: Date.now(),
+            })
+          : user,
+      );
+      return 'Password changed'; // todo: 200
+    }
   }
 
-  removeUser(id: string) {
+  async removeUser(id: string) {
+    if (!validate(id)) {
+      return 'Wrong user ID'; // todo: 400
+    }
+
+    const user = this.database.users.find((user) => user.id === id);
+
+    if (!user) {
+      return 'User not found'; // todo: 404
+    }
+
     this.database.users = this.database.users.filter((user) => user.id !== id);
-    return id;
+    return id; // todo: 204;
   }
 }

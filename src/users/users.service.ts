@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { User } from '../entities';
+import { CreateUserDto, UpdatePasswordDto } from '../entities';
 
 @Injectable()
 export class UsersService {
@@ -14,12 +14,12 @@ export class UsersService {
     return this.dbService.getUserById(id);
   }
 
-  create(user: User) {
-    return this.dbService.addUser(user);
+  create(dto: CreateUserDto) {
+    return this.dbService.addUser(dto);
   }
 
-  update(id: string, user: User) {
-    return this.dbService.updateUser(id, user);
+  update(id: string, dto: UpdatePasswordDto) {
+    return this.dbService.updateUserPassword(id, dto);
   }
 
   remove(id: string) {
