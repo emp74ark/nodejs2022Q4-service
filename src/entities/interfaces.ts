@@ -49,3 +49,7 @@ export interface FavoritesResponse {
   albums: Album[];
   tracks: Track[];
 }
+
+export interface Database {
+  users: User[];
+}
