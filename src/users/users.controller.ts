@@ -8,11 +8,14 @@ import {
   ParseUUIDPipe,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUser } from './dto/create-user.dto';
 import { UpdatePassword } from './dto/update-password.dto';
+import { PublicFieldsInterceptor } from './public-fields.interceptor';
 
+@UseInterceptors(new PublicFieldsInterceptor())
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}

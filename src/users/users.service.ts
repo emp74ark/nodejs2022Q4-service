@@ -61,6 +61,7 @@ export class UsersService {
 
   async remove(id: string) {
     const user = await this.getOne(id);
-    return this.dbService.removeUser(user.id);
+    this.dbService.removeUser(user.id);
+    return user;
   }
 }
