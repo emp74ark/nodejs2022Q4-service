@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateUserDto, UpdatePasswordDto, User } from '../entities';
 import { v4 as uuid } from 'uuid';
@@ -11,8 +16,14 @@ export class UsersService {
     return this.dbService.getAllUsers();
   }
 
-  getOne(id: string) {
-    return this.dbService.getUserById(id);
+  async getOne(id: string) {
+    const user = await this.dbService.getUserById(id);
+
+    if (user === undefined) {
+      throw new NotFoundException();
+    }
+
+    return user;
   }
 
   create(dto: CreateUserDto) {
@@ -30,7 +41,7 @@ export class UsersService {
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
-    const user = await this.dbService.getUserById(id);
+    const user = await this.getOne(id);
 
     if (user.password !== dto.oldPassword) {
       throw new HttpException('Wrong password', HttpStatus.FORBIDDEN);
@@ -48,7 +59,8 @@ export class UsersService {
     }
   }
 
-  remove(id: string) {
-    return this.dbService.removeUser(id);
+  async remove(id: string) {
+    const user = await this.getOne(id);
+    return this.dbService.removeUser(user.id);
   }
 }

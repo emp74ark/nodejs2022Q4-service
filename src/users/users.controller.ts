@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -24,13 +23,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  async getOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    const user = await this.userService.getOne(id);
-    if (user === undefined) {
-      throw new NotFoundException();
-    } else {
-      return user;
-    }
+  getOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.userService.getOne(id);
   }
 
   @Post()
@@ -40,17 +34,12 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(204)
-  async delete(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    const user = this.userService.getOne(id);
-    if (user === undefined) {
-      throw new NotFoundException();
-    } else {
-      return this.userService.remove(id);
-    }
+  delete(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    return this.userService.remove(id);
   }
 
   @Put(':id')
-  put(
+  async put(
     @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Body() body: UpdatePassword,
   ) {
