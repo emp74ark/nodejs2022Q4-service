@@ -22,10 +22,6 @@ export class DatabaseService {
   }
 
   async addUser(dto: CreateUserDto) {
-    if (!('login' in dto) || !('password' in dto)) {
-      return 'Required fields are missed'; // todo: 400
-    }
-
     const user: User = {
       ...dto,
       id: uuid(),
