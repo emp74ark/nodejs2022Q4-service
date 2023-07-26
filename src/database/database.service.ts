@@ -13,12 +13,7 @@ export class DatabaseService {
   }
 
   async getUserById(id: string) {
-    const user = this.database.users.find((user) => user.id === id);
-    if (!user) {
-      return 'User not found'; // todo: 404
-    } else {
-      return user; // todo: 200
-    }
+    return this.database.users.find((user) => user.id === id);
   }
 
   async addUser(dto: CreateUserDto) {
@@ -38,9 +33,7 @@ export class DatabaseService {
   async updateUserPassword(id: string, dto: UpdatePasswordDto) {
     const user = this.database.users.find((user) => user.id === id);
 
-    if (!user) {
-      return 'User not found'; // todo: 404
-    } else if (user.password !== dto.oldPassword) {
+    if (user.password !== dto.oldPassword) {
       return 'Wrong password'; // todo: 403
     } else {
       this.database.users = this.database.users.map((user) =>
@@ -58,13 +51,7 @@ export class DatabaseService {
   }
 
   async removeUser(id: string) {
-    const user = this.database.users.find((user) => user.id === id);
-
-    if (!user) {
-      return 'User not found'; // todo: 404
-    }
-
     this.database.users = this.database.users.filter((user) => user.id !== id);
-    return id; // todo: 204;
+    return id;
   }
 }

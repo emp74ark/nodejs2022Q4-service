@@ -2,16 +2,16 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpCode,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
-  Put,
-} from '@nestjs/common';
-import { CreateUserDto, UpdatePasswordDto } from '../entities';
+  Put
+} from "@nestjs/common";
 import { UsersService } from './users.service';
-import { CreateUser } from "./dto/create-user.dto";
-import { UpdatePassword } from "./dto/update-password.dto";
+import { CreateUser } from './dto/create-user.dto';
+import { UpdatePassword } from './dto/update-password.dto';
 
 @Controller('users')
 export class UsersController {
@@ -23,8 +23,13 @@ export class UsersController {
   }
 
   @Get(':id')
-  getOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.userService.getOne(id);
+  async getOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    const user = await this.userService.getOne(id);
+    if (user === undefined) {
+      throw new NotFoundException();
+    } else {
+      return user;
+    }
   }
 
   @Post()
@@ -33,12 +38,19 @@ export class UsersController {
   }
 
   @Delete(':id')
-  delete(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.userService.remove(id);
+  @HttpCode(204)
+  async delete(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
+    const user = this.userService.getOne(id);
+    if (user === undefined) {
+      throw new NotFoundException();
+    }
   }
 
   @Put(':id')
-  put(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string, @Body() body: UpdatePassword) {
+  put(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() body: UpdatePassword,
+  ) {
     return this.userService.update(id, body);
   }
 }
