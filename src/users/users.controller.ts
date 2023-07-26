@@ -2,13 +2,14 @@ import {
   Body,
   Controller,
   Delete,
-  Get, HttpCode,
+  Get,
+  HttpCode,
   NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
-  Put
-} from "@nestjs/common";
+  Put,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUser } from './dto/create-user.dto';
 import { UpdatePassword } from './dto/update-password.dto';

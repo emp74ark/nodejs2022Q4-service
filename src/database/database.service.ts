@@ -16,18 +16,8 @@ export class DatabaseService {
     return this.database.users.find((user) => user.id === id);
   }
 
-  async addUser(dto: CreateUserDto) {
-    const user: User = {
-      ...dto,
-      id: uuid(),
-      version: 0,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-
-    this.database.users.push(user);
-
-    return user; // todo: 201
+  async addUser(user: User) {
+    return this.database.users.push(user);
   }
 
   async updateUserPassword(id: string, dto: UpdatePasswordDto) {
