@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto, Database, UpdatePasswordDto, User } from '../entities';
-import { v4 as uuid } from 'uuid';
+import { Database, User } from '../entities';
 
 @Injectable()
 export class DatabaseService {
@@ -16,28 +15,14 @@ export class DatabaseService {
     return this.database.users.find((user) => user.id === id);
   }
 
-  async addUser(user: User) {
-    return this.database.users.push(user);
+  async addUser(dto: User) {
+    return this.database.users.push(dto);
   }
 
-  async updateUserPassword(id: string, dto: UpdatePasswordDto) {
-    const user = this.database.users.find((user) => user.id === id);
-
-    if (user.password !== dto.oldPassword) {
-      return 'Wrong password'; // todo: 403
-    } else {
-      this.database.users = this.database.users.map((user) =>
-        user.id === id
-          ? (user = {
-              ...user,
-              password: dto.newPassword,
-              version: user.version + 1,
-              updatedAt: Date.now(),
-            })
-          : user,
-      );
-      return 'Password changed'; // todo: 200
-    }
+  async updateUser(dto: User) {
+    this.database.users = this.database.users.map((user) =>
+      user.id === dto.id ? (user = dto) : user,
+    );
   }
 
   async removeUser(id: string) {

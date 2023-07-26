@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { CreateUserDto, UpdatePasswordDto, User } from '../entities';
 import { v4 as uuid } from 'uuid';
@@ -24,11 +24,28 @@ export class UsersService {
       updatedAt: Date.now(),
     };
 
-    return this.dbService.addUser(user);
+    this.dbService.addUser(user);
+
+    return user;
   }
 
-  update(id: string, dto: UpdatePasswordDto) {
-    return this.dbService.updateUserPassword(id, dto);
+  async update(id: string, dto: UpdatePasswordDto) {
+    const user = await this.dbService.getUserById(id);
+
+    if (user.password !== dto.oldPassword) {
+      throw new HttpException('Wrong password', HttpStatus.FORBIDDEN);
+    } else {
+      const updated: User = {
+        ...user,
+        password: dto.newPassword,
+        version: user.version + 1,
+        updatedAt: Date.now(),
+      };
+
+      this.dbService.updateUser(updated);
+
+      return updated;
+    }
   }
 
   remove(id: string) {

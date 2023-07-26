@@ -44,6 +44,8 @@ export class UsersController {
     const user = this.userService.getOne(id);
     if (user === undefined) {
       throw new NotFoundException();
+    } else {
+      return this.userService.remove(id);
     }
   }
 
