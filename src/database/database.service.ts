@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto, Database, UpdatePasswordDto, User } from '../entities';
-import { v4 as uuid, validate } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class DatabaseService {
@@ -13,10 +13,6 @@ export class DatabaseService {
   }
 
   async getUserById(id: string) {
-    if (!validate(id)) {
-      return 'Wrong user ID'; // todo: 400
-    }
-
     const user = this.database.users.find((user) => user.id === id);
     if (!user) {
       return 'User not found'; // todo: 404
@@ -44,10 +40,6 @@ export class DatabaseService {
   }
 
   async updateUserPassword(id: string, dto: UpdatePasswordDto) {
-    if (!validate(id)) {
-      return 'Wrong user ID'; // todo: 400
-    }
-
     const user = this.database.users.find((user) => user.id === id);
 
     if (!user) {
@@ -70,10 +62,6 @@ export class DatabaseService {
   }
 
   async removeUser(id: string) {
-    if (!validate(id)) {
-      return 'Wrong user ID'; // todo: 400
-    }
-
     const user = this.database.users.find((user) => user.id === id);
 
     if (!user) {
