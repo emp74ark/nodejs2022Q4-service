@@ -46,7 +46,7 @@ export class DatabaseService {
 
   async updateArtist(dto: Artist) {
     this.database.artists = this.database.artists.map((track) =>
-      track.id === dto.id ? { ...track, dto } : track,
+      track.id === dto.id ? { ...track, ...dto } : track,
     );
   }
 

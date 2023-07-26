@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DatabaseService } from '../database/database.service';
@@ -14,7 +18,10 @@ export class ArtistService {
       ...createArtistDto,
       id: uuid(),
     };
-    return this.dbService.addArtist(newArtist);
+
+    this.dbService.addArtist(newArtist);
+
+    return newArtist;
   }
 
   findAll() {
@@ -32,6 +39,7 @@ export class ArtistService {
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {
+    if (!id) throw new BadRequestException();
     const artist = await this.findOne(id);
 
     const updated: Artist = {
