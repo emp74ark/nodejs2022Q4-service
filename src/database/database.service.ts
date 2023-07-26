@@ -8,6 +8,11 @@ export class DatabaseService {
     artists: [],
     tracks: [],
     albums: [],
+    favorites: {
+      artists: [],
+      albums: [],
+      tracks: [],
+    },
   };
 
   // Users
@@ -113,5 +118,40 @@ export class DatabaseService {
       (album) => album.id !== id,
     );
     return id;
+  }
+
+  // Favorites
+  async getAllFavorites() {
+    return this.database.favorites;
+  }
+
+  async addTrackToFavorites(id: string) {
+    this.database.favorites.tracks.push(id);
+  }
+
+  async removeTrackFromFavorites(id: string) {
+    this.database.favorites.tracks = this.database.favorites.tracks.filter(
+      (trackId) => trackId !== id,
+    );
+  }
+
+  async addAlbumToFavorites(id: string) {
+    this.database.favorites.albums.push(id);
+  }
+
+  async removeAlbumFromFavorites(id: string) {
+    this.database.favorites.albums = this.database.favorites.albums.filter(
+      (albumId) => albumId !== id,
+    );
+  }
+
+  async addArtistToFavorites(id: string) {
+    this.database.favorites.artists.push(id);
+  }
+
+  async removeArtistFromFavorites(id: string) {
+    this.database.favorites.artists = this.database.favorites.artists.filter(
+      (artistId) => artistId !== id,
+    );
   }
 }

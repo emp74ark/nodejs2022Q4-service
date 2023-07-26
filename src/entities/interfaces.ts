@@ -55,4 +55,5 @@ export interface Database {
   artists: Artist[];
   tracks: Track[];
   albums: Album[];
+  favorites: Favorites;
 }
