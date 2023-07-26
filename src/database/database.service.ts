@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Artist, Database, Track, User } from '../entities';
+import { Album, Artist, Database, Track, User } from '../entities';
 
 @Injectable()
 export class DatabaseService {
@@ -7,8 +7,10 @@ export class DatabaseService {
     users: [],
     artists: [],
     tracks: [],
+    albums: [],
   };
 
+  // Users
   async getAllUsers() {
     return this.database.users;
   }
@@ -32,6 +34,7 @@ export class DatabaseService {
     return id;
   }
 
+  // Artists
   async getAllArtists() {
     return this.database.artists;
   }
@@ -48,7 +51,6 @@ export class DatabaseService {
     this.database.artists = this.database.artists.map((artist) =>
       artist.id === dto.id ? { ...artist, ...dto } : artist,
     );
-
     return dto;
   }
 
@@ -59,6 +61,7 @@ export class DatabaseService {
     return id;
   }
 
+  // Tracks
   async getAllTracks() {
     return this.database.tracks;
   }
@@ -75,13 +78,39 @@ export class DatabaseService {
     this.database.tracks = this.database.tracks.map((track) =>
       track.id === dto.id ? { ...track, ...dto } : track,
     );
-
     return dto;
   }
 
   async removeTrack(id: string) {
     this.database.tracks = this.database.tracks.filter(
       (track) => track.id !== id,
+    );
+    return id;
+  }
+
+  // Albums
+  async getAllAlbums() {
+    return this.database.albums;
+  }
+
+  async getAlbumById(id: string) {
+    return this.database.albums.find((album) => album.id === id);
+  }
+
+  async addAlbum(dto: Album) {
+    this.database.albums.push(dto);
+  }
+
+  async updateAlbum(dto: Album) {
+    this.database.albums = this.database.albums.map((albums) =>
+      albums.id === dto.id ? { ...albums, ...dto } : albums,
+    );
+    return dto;
+  }
+
+  async removeAlbum(id: string) {
+    this.database.albums = this.database.albums.filter(
+      (album) => album.id !== id,
     );
     return id;
   }
