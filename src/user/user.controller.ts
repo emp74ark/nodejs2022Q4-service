@@ -10,24 +10,24 @@ import {
   Put,
   UseInterceptors,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import { CreateUser } from './dto/create-user.dto';
 import { UpdatePassword } from './dto/update-password.dto';
 import { PublicFieldsInterceptor } from './public-fields.interceptor';
 
 @UseInterceptors(new PublicFieldsInterceptor())
-@Controller('users')
-export class UsersController {
-  constructor(private readonly userService: UsersService) {}
+@Controller('user')
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   getAll() {
-    return this.userService.getAll();
+    return this.userService.findAll();
   }
 
   @Get(':id')
   getOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.userService.getOne(id);
+    return this.userService.findOne(id);
   }
 
   @Post()

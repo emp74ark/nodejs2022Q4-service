@@ -5,18 +5,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { CreateUserDto, UpdatePasswordDto, User } from '../entities';
+import { User } from '../entities';
 import { v4 as uuid } from 'uuid';
+import { CreateUser } from './dto/create-user.dto';
+import { UpdatePassword } from './dto/update-password.dto';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(private dbService: DatabaseService) {}
 
-  getAll() {
+  findAll() {
     return this.dbService.getAllUsers();
   }
 
-  async getOne(id: string) {
+  async findOne(id: string) {
     const user = await this.dbService.getUserById(id);
 
     if (user === undefined) {
@@ -26,11 +28,11 @@ export class UsersService {
     return user;
   }
 
-  create(dto: CreateUserDto) {
+  create(dto: CreateUser) {
     const user: User = {
       ...dto,
       id: uuid(),
-      version: 0,
+      version: 1,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -40,8 +42,8 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, dto: UpdatePasswordDto) {
-    const user = await this.getOne(id);
+  async update(id: string, dto: UpdatePassword) {
+    const user = await this.findOne(id);
 
     if (user.password !== dto.oldPassword) {
       throw new HttpException('Wrong password', HttpStatus.FORBIDDEN);
@@ -60,7 +62,7 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    const user = await this.getOne(id);
+    const user = await this.findOne(id);
     this.dbService.removeUser(user.id);
     return user;
   }
