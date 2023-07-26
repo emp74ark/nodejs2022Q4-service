@@ -37,7 +37,7 @@ export class DatabaseService {
   }
 
   async getArtistById(id: string) {
-    return this.database.artists.find((track) => track.id === id);
+    return this.database.artists.find((artist) => artist.id === id);
   }
 
   async addArtist(dto: Artist) {
@@ -45,9 +45,11 @@ export class DatabaseService {
   }
 
   async updateArtist(dto: Artist) {
-    this.database.artists = this.database.artists.map((track) =>
-      track.id === dto.id ? { ...track, ...dto } : track,
+    this.database.artists = this.database.artists.map((artist) =>
+      artist.id === dto.id ? { ...artist, ...dto } : artist,
     );
+
+    return dto;
   }
 
   async removeArtist(id: string) {
@@ -71,8 +73,10 @@ export class DatabaseService {
 
   async updateTrack(dto: Track) {
     this.database.tracks = this.database.tracks.map((track) =>
-      track.id === dto.id ? { ...track, dto } : track,
+      track.id === dto.id ? { ...track, ...dto } : track,
     );
+
+    return dto;
   }
 
   async removeTrack(id: string) {

@@ -14,7 +14,8 @@ export class TrackService {
       ...createTrackDto,
       id: uuid(),
     };
-    return this.dbService.addTrack(newTrack);
+    this.dbService.addTrack(newTrack);
+    return newTrack;
   }
 
   findAll() {
