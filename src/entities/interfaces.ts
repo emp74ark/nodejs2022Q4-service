@@ -52,4 +52,6 @@ export interface FavoritesResponse {
 
 export interface Database {
   users: User[];
+  artists: Artist[];
+  tracks: Track[];
 }

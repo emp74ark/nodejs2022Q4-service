@@ -5,6 +5,8 @@ import { Database, User } from '../entities';
 export class DatabaseService {
   private database: Database = {
     users: [],
+    artists: [],
+    tracks: [],
   };
 
   async getAllUsers() {
@@ -27,6 +29,31 @@ export class DatabaseService {
 
   async removeUser(id: string) {
     this.database.users = this.database.users.filter((user) => user.id !== id);
+    return id;
+  }
+
+  async getAllArtists() {
+    return this.database.artists;
+  }
+
+  async getArtistById(id: string) {
+    return this.database.artists.find((track) => track.id === id);
+  }
+
+  async addArtist(dto: Artist) {
+    this.database.artists.push(dto);
+  }
+
+  async updateArtist(dto: Artist) {
+    this.database.artists = this.database.artists.map((track) =>
+      track.id === dto.id ? { ...track, dto } : track,
+    );
+  }
+
+  async removeArtist(id: string) {
+    this.database.artists = this.database.artists.filter(
+      (track) => track.id !== id,
+    );
     return id;
   }
 }
