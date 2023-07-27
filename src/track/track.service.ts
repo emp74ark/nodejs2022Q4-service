@@ -48,6 +48,10 @@ export class TrackService {
   async remove(id: string) {
     const track = await this.findOne(id);
     this.dbService.removeTrack(id);
+
+    // remove track from favs
+    this.dbService.removeTrackFromFavorites(id);
+
     return track;
   }
 }

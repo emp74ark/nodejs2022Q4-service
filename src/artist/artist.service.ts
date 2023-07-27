@@ -55,6 +55,24 @@ export class ArtistService {
   async remove(id: string) {
     const artist = await this.findOne(id);
     this.dbService.removeArtist(id);
+
+    // change artist id to null in all tracks
+    const tracks = await this.dbService.getAllTracks();
+    const filteredTracks = tracks.filter((track) => track.artistId === id);
+    filteredTracks.forEach((track) => {
+      this.dbService.updateTrack({ ...track, artistId: null });
+    });
+
+    // change album id to null in all tracks
+    const albums = await this.dbService.getAllAlbums();
+    const filteredAlbums = albums.filter((album) => album.artistId === id);
+    filteredAlbums.forEach((album) => {
+      this.dbService.updateAlbum({ ...album, artistId: null });
+    });
+
+    // remove artist from favs
+    this.dbService.removeArtistFromFavorites(id);
+
     return artist;
   }
 }

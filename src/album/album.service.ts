@@ -43,6 +43,17 @@ export class AlbumService {
   async remove(id: string) {
     const album = await this.findOne(id);
     this.dbService.removeAlbum(id);
+
+    // change album id to null in all tracks
+    const tracks = await this.dbService.getAllTracks();
+    const filtered = tracks.filter((track) => track.albumId === id);
+    filtered.forEach((track) => {
+      this.dbService.updateTrack({ ...track, albumId: null });
+    });
+
+    // remove album from favs
+    this.dbService.removeAlbumFromFavorites(id);
+
     return album;
   }
 }
