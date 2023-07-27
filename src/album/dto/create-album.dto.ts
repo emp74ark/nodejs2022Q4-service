@@ -1,13 +1,15 @@
 import { Album } from '../../entities';
-import { IsNotEmpty, IsUUID } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateAlbumDto implements Omit<Album, 'id'> {
   @IsNotEmpty()
+  @IsString()
   name: string;
 
   @IsNotEmpty()
+  @IsInt()
   year: number;
 
-  @IsUUID()
+  @IsOptional()
   artistId: string;
 }
