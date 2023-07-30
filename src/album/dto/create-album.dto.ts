@@ -11,5 +11,5 @@ export class CreateAlbumDto implements Omit<Album, 'id'> {
   year: number;
 
   @IsOptional()
-  artistId: string;
+  artistId?: string;
 }

@@ -7,10 +7,10 @@ export class CreateTrackDto implements Omit<Track, 'id'> {
   name: string;
 
   @IsOptional()
-  artistId: string;
+  artistId?: string;
 
   @IsOptional()
-  albumId: string;
+  albumId?: string;
 
   @IsNotEmpty()
   @IsNumber()
