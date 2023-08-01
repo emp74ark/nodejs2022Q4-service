@@ -1,0 +1,40 @@
+name: rs-library-prod
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${PG_PSW}
+    networks:
+      - server
+    ports:
+      - ${PG_PORT}:${PG_PORT}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - HOST=${HOST}
+      - PORT=${PORT}
+      - PG_HOST=postgres
+      - PG_PORT=${PG_PORT}
+      - PG_DB=rs-library
+      - PG_USER=postgres
+      - PG_PSW=${PG_PSW}
+    restart: always
+    networks:
+      - server
+      - client
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - postgres
+networks:
+  client: {}
+  server: {}
+volumes:
+  postgres-data: {}
