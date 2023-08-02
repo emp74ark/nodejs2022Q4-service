@@ -11,3 +11,7 @@ export const JWT_SECRET_REFRESH_KEY =
 export const TOKEN_EXPIRE_TIME = process.env.TOKEN_EXPIRE_TIME || '1h';
 export const TOKEN_REFRESH_EXPIRE_TIME =
   process.env.TOKEN_REFRESH_EXPIRE_TIME || '24h';
+export const HOST = process.env.HOST || 'localhost';
+export const PG_PORT = Number(process.env.PORT) || 5432;
+export const PG_PSW = process.env.PG_PSW || '';
+export const DATABASE_URL = process.env.DATABASE_URL || '';
