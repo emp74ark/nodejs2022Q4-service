@@ -14,22 +14,24 @@ export class ArtistService {
   constructor(private dbService: DatabaseService) {}
 
   create(createArtistDto: CreateArtistDto) {
-    const newArtist = {
+    const artist = {
       ...createArtistDto,
       id: uuid(),
     };
 
-    this.dbService.addArtist(newArtist);
+    this.dbService.artist.create({ data: artist });
 
-    return newArtist;
+    return artist;
   }
 
   findAll() {
-    return this.dbService.getAllArtists();
+    return this.dbService.artist.findMany({});
   }
 
   async findOne(id: string) {
-    const artist = await this.dbService.getArtistById(id);
+    const artist = await this.dbService.artist.findUnique({
+      where: { id: id },
+    });
 
     if (artist === undefined) {
       throw new NotFoundException();
@@ -47,31 +49,36 @@ export class ArtistService {
       ...updateArtistDto,
     };
 
-    this.dbService.updateArtist(updated);
+    this.dbService.artist.update({
+      where: { id: updated.id },
+      data: updated,
+    });
 
     return updated;
   }
 
   async remove(id: string) {
     const artist = await this.findOne(id);
-    this.dbService.removeArtist(id);
+    this.dbService.artist.delete({
+      where: { id: artist.id },
+    }); // todo: cascade in schema
 
-    // change artist id to null in all tracks
-    const tracks = await this.dbService.getAllTracks();
-    const filteredTracks = tracks.filter((track) => track.artistId === id);
-    filteredTracks.forEach((track) => {
-      this.dbService.updateTrack({ ...track, artistId: null });
-    });
-
-    // change album id to null in all tracks
-    const albums = await this.dbService.getAllAlbums();
-    const filteredAlbums = albums.filter((album) => album.artistId === id);
-    filteredAlbums.forEach((album) => {
-      this.dbService.updateAlbum({ ...album, artistId: null });
-    });
-
-    // remove artist from favs
-    this.dbService.removeArtistFromFavorites(id);
+    // // change artist id to null in all tracks
+    // const tracks = await this.dbService.getAllTracks();
+    // const filteredTracks = tracks.filter((track) => track.artistId === id);
+    // filteredTracks.forEach((track) => {
+    //   this.dbService.updateTrack({ ...track, artistId: null });
+    // });
+    //
+    // // change album id to null in all tracks
+    // const albums = await this.dbService.getAllAlbums();
+    // const filteredAlbums = albums.filter((album) => album.artistId === id);
+    // filteredAlbums.forEach((album) => {
+    //   this.dbService.updateAlbum({ ...album, artistId: null });
+    // });
+    //
+    // // remove artist from favs
+    // this.dbService.removeArtistFromFavorites(id);
 
     return artist;
   }
