@@ -10,20 +10,22 @@ export class TrackService {
   constructor(private dbService: DatabaseService) {}
 
   create(createTrackDto: CreateTrackDto) {
-    const newTrack = {
+    const track = {
       ...createTrackDto,
       id: uuid(),
     };
-    this.dbService.addTrack(newTrack);
-    return newTrack;
+    this.dbService.track.create({ data: track });
+    return track;
   }
 
   findAll() {
-    return this.dbService.getAllTracks();
+    return this.dbService.track.findMany({});
   }
 
   async findOne(id: string) {
-    const track = await this.dbService.getTrackById(id);
+    const track = await this.dbService.track.findUnique({
+      where: { id: id },
+    });
 
     if (track === undefined) {
       throw new NotFoundException();
@@ -40,17 +42,21 @@ export class TrackService {
       ...updateTrackDto,
     };
 
-    this.dbService.updateTrack(updated);
+    this.dbService.track.update({
+      where: { id: updated.id },
+      data: updated,
+    });
 
     return updated;
   }
 
   async remove(id: string) {
     const track = await this.findOne(id);
-    this.dbService.removeTrack(id);
-
-    // remove track from favs
-    this.dbService.removeTrackFromFavorites(id);
+    this.dbService.track.delete({
+      where: { id: track.id },
+    }); // todo: cascade in scheme
+    // // remove track from favs
+    // this.dbService.removeTrackFromFavorites(id);
 
     return track;
   }
