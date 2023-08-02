@@ -13,16 +13,18 @@ export class AlbumService {
       ...createAlbumDto,
       id: uuid(),
     };
-    this.dbService.addAlbum(album);
+    this.dbService.album.create({ data: album });
     return album;
   }
 
   findAll() {
-    return this.dbService.getAllAlbums();
+    return this.dbService.album.findMany({});
   }
 
   async findOne(id: string) {
-    const album = await this.dbService.getAlbumById(id);
+    const album = await this.dbService.album.findUnique({
+      where: { id: id },
+    });
     if (album === undefined) {
       throw new NotFoundException();
     } else {
@@ -36,23 +38,28 @@ export class AlbumService {
       ...album,
       ...updateAlbumDto,
     };
-    this.dbService.updateAlbum(updated);
+    this.dbService.album.update({
+      where: { id: album.id },
+      data: updated,
+    });
     return updated;
   }
 
   async remove(id: string) {
     const album = await this.findOne(id);
-    this.dbService.removeAlbum(id);
+    this.dbService.album.delete({
+      where: { id: album.id },
+    }); // todo: cascade in schema
 
-    // change album id to null in all tracks
-    const tracks = await this.dbService.getAllTracks();
-    const filtered = tracks.filter((track) => track.albumId === id);
-    filtered.forEach((track) => {
-      this.dbService.updateTrack({ ...track, albumId: null });
-    });
-
-    // remove album from favs
-    this.dbService.removeAlbumFromFavorites(id);
+    // // change album id to null in all tracks
+    // const tracks = await this.dbService.getAllTracks();
+    // const filtered = tracks.filter((track) => track.albumId === id);
+    // filtered.forEach((track) => {
+    //   this.dbService.updateTrack({ ...track, albumId: null });
+    // });
+    //
+    // // remove album from favs
+    // this.dbService.removeAlbumFromFavorites(id);
 
     return album;
   }
