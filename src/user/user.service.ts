@@ -15,11 +15,13 @@ export class UserService {
   constructor(private dbService: DatabaseService) {}
 
   findAll() {
-    return this.dbService.getAllUsers();
+    return this.dbService.user.findMany({});
   }
 
   async findOne(id: string) {
-    const user = await this.dbService.getUserById(id);
+    const user = await this.dbService.user.findUnique({
+      where: { id: id },
+    });
 
     if (user === undefined) {
       throw new NotFoundException();
@@ -37,7 +39,7 @@ export class UserService {
       updatedAt: Date.now(),
     };
 
-    this.dbService.addUser(user);
+    this.dbService.user.create({ data: user });
 
     return user;
   }
@@ -55,7 +57,10 @@ export class UserService {
         updatedAt: Date.now(),
       };
 
-      this.dbService.updateUser(updated);
+      this.dbService.user.update({
+        where: { id: updated.id },
+        data: updated,
+      });
 
       return updated;
     }
@@ -63,7 +68,7 @@ export class UserService {
 
   async remove(id: string) {
     const user = await this.findOne(id);
-    this.dbService.removeUser(user.id);
+    this.dbService.user.delete({ where: { id: user.id } });
     return user;
   }
 }
