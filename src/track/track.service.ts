@@ -8,8 +8,27 @@ import { Track } from '../entities';
 export class TrackService {
   constructor(private dbService: DatabaseService) {}
 
-  create(createTrackDto: CreateTrackDto) {
-    // todo: check if artist/album exist
+  async create(createTrackDto: CreateTrackDto) {
+    const album = createTrackDto.albumId
+      ? await this.dbService.album.findUnique({
+          where: { id: createTrackDto.albumId },
+        })
+      : null;
+
+    if (!album) {
+      delete createTrackDto.albumId;
+    }
+
+    const artist = createTrackDto.artistId
+      ? await this.dbService.artist.findUnique({
+          where: { id: createTrackDto.artistId },
+        })
+      : null;
+
+    if (!artist) {
+      delete createTrackDto.artistId;
+    }
+
     return this.dbService.track.create({ data: createTrackDto });
   }
 
