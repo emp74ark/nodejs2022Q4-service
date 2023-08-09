@@ -11,11 +11,20 @@ export class FavsService {
 
   async findAll() {
     const user = await this.sessionUser();
-    return {
-      tracks: user.favTrack,
-      albums: user.favAlbum,
-      artist: user.favArtist,
-    };
+
+    const tracks = await this.dbService.track.findMany({
+      where: { id: { in: user.favTrack } },
+    });
+
+    const albums = await this.dbService.album.findMany({
+      where: { id: { in: user.favAlbum } },
+    });
+
+    const artists = await this.dbService.artist.findMany({
+      where: { id: { in: user.favArtist } },
+    });
+
+    return { tracks, albums, artists };
   }
 
   async addTrack(id: string) {
@@ -26,13 +35,15 @@ export class FavsService {
     });
 
     if (track) {
-      return this.dbService.user.update({
+      await this.dbService.user.update({
         where: { id: user.id },
         data: { favTrack: { push: track.id } },
         select: {
           favTrack: true,
         },
       });
+
+      return track;
     }
 
     throw new UnprocessableEntityException();
@@ -55,13 +66,15 @@ export class FavsService {
     });
 
     if (album) {
-      return this.dbService.user.update({
+      await this.dbService.user.update({
         where: { id: user.id },
         data: { favAlbum: { push: album.id } },
         select: {
           favAlbum: true,
         },
       });
+
+      return album;
     }
 
     throw new UnprocessableEntityException();
@@ -84,13 +97,15 @@ export class FavsService {
     });
 
     if (artist) {
-      return this.dbService.user.update({
+      await this.dbService.user.update({
         where: { id: user.id },
         data: { favArtist: { push: artist.id } },
         select: {
           favArtist: true,
         },
       });
+
+      return artist;
     }
 
     throw new UnprocessableEntityException();

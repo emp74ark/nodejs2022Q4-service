@@ -44,15 +44,12 @@ export class UserService {
     if (user.password !== dto.oldPassword) {
       throw new HttpException('Wrong password', HttpStatus.FORBIDDEN);
     } else {
-      const updated = {
-        ...user,
-        password: dto.newPassword,
-        version: user.version + 1,
-      };
-
       return this.dbService.user.update({
-        where: { id: updated.id },
-        data: updated,
+        where: { id },
+        data: {
+          password: dto.newPassword,
+          version: user.version + 1,
+        },
       });
     }
   }

@@ -11,8 +11,12 @@ import { User } from '../entities';
 export class PublicFieldsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const publicFields = (user: User) => {
-      const { password, ...rest } = user;
-      return rest;
+      const { password, updatedAt, createdAt, ...rest } = user;
+      return {
+        ...rest,
+        createdAt: createdAt.getTime(), // fixme: move this somewhere else
+        updatedAt: updatedAt.getTime(),
+      };
     };
 
     return next.handle().pipe(
