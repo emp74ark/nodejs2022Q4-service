@@ -3,7 +3,7 @@
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
-- Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Install [Docker](https://docs.docker.com/engine/install/)
 
 ## Downloading
 
@@ -17,50 +17,14 @@ git clone https://github.com/emp74ark/nodejs2022Q4-service
 git checkout dev_p2
 ```
 
-## Installing NPM modules
-
-```
-npm install
-```
-
-## Running application
-Rename file **.env.example** to **.env** and change necessary variables.
-
-```
-npm start
-```
-
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:{{PORT}}/doc/.
-
-## Testing
-
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
-```
-npm run test
-```
-
-To run only one of all test suites
-
-```
-npm run test -- <path to suite>
-```
-
 ## Docker
 
 ### Docker hub:
+
 ```bash
 docker compose --env-file .env -f docker-compose.yml up -d
 ```
-Or pull images separately:
 
-```bash
-docker pull emp74ark/rs-library-prod-backend:latest
-docker pull emp74ark/rs-library-prod-postgres:latest
-```
 #### Start/stop docker containers
 
 ```bash
@@ -94,6 +58,14 @@ docker compose -f docker-compose.prod.yml stop
 ```bash
 docker compose --env-file .env -f docker-compose.dev.yml up -d
 ```
+
+For dev after docker images started run prisma migration script **manually**:
+```bash
+ npx prisma migrate dev --name init
+```
+
+If needed change necessary variables in **.env** and recreate images.
+
 #### Start/stop docker containers
 
 ```bash
@@ -108,4 +80,20 @@ docker compose -f docker-compose.dev.yml stop
 
 ```bash
 docker logs --follow {contaier_name}
+```
+
+## Testing
+
+After application running open new terminal and enter:
+
+To run all tests without authorization
+
+```
+npm run test
+```
+
+To run only one of all test suites
+
+```
+npm run test -- <path to suite>
 ```
