@@ -7,8 +7,17 @@ import { DatabaseService } from '../database/database.service';
 export class AlbumService {
   constructor(private dbService: DatabaseService) {}
 
-  create(createAlbumDto: CreateAlbumDto) {
-    // todo: check if artist exist
+  async create(createAlbumDto: CreateAlbumDto) {
+    const artist = createAlbumDto.artistId
+      ? await this.dbService.artist.findUnique({
+          where: { id: createAlbumDto.artistId },
+        })
+      : null;
+
+    if (!artist) {
+      delete createAlbumDto.artistId;
+    }
+
     return this.dbService.album.create({ data: createAlbumDto });
   }
 
