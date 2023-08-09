@@ -3,19 +3,14 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { DatabaseService } from '../database/database.service';
 import { Track } from '../entities';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class TrackService {
   constructor(private dbService: DatabaseService) {}
 
   create(createTrackDto: CreateTrackDto) {
-    const track = {
-      ...createTrackDto,
-      id: uuid(),
-    };
-    this.dbService.track.create({ data: track });
-    return track;
+    // todo: check if artist/album exist
+    return this.dbService.track.create({ data: createTrackDto });
   }
 
   findAll() {
@@ -27,7 +22,7 @@ export class TrackService {
       where: { id: id },
     });
 
-    if (track === undefined) {
+    if (!track) {
       throw new NotFoundException();
     }
 
@@ -42,22 +37,18 @@ export class TrackService {
       ...updateTrackDto,
     };
 
-    this.dbService.track.update({
+    return this.dbService.track.update({
       where: { id: updated.id },
       data: updated,
     });
-
-    return updated;
   }
 
   async remove(id: string) {
     const track = await this.findOne(id);
-    this.dbService.track.delete({
+    return this.dbService.track.delete({
       where: { id: track.id },
     }); // todo: cascade in scheme
     // // remove track from favs
     // this.dbService.removeTrackFromFavorites(id);
-
-    return track;
   }
 }

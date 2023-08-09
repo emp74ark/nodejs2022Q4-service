@@ -5,8 +5,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
-import { User } from '../entities';
-import { v4 as uuid } from 'uuid';
 import { CreateUser } from './dto/create-user.dto';
 import { UpdatePassword } from './dto/update-password.dto';
 
@@ -23,25 +21,21 @@ export class UserService {
       where: { id: id },
     });
 
-    if (user === undefined) {
+    if (!user) {
       throw new NotFoundException();
     }
 
     return user;
   }
 
-  create(dto: CreateUser) {
-    const user: User = {
-      ...dto,
-      id: uuid(),
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-
-    this.dbService.user.create({ data: user });
-
-    return user;
+  create(createUserDto: CreateUser) {
+    return this.dbService.user.create({
+      data: {
+        login: createUserDto.login,
+        password: createUserDto.password,
+        version: 1,
+      },
+    });
   }
 
   async update(id: string, dto: UpdatePassword) {
@@ -50,25 +44,21 @@ export class UserService {
     if (user.password !== dto.oldPassword) {
       throw new HttpException('Wrong password', HttpStatus.FORBIDDEN);
     } else {
-      const updated: User = {
+      const updated = {
         ...user,
         password: dto.newPassword,
         version: user.version + 1,
-        updatedAt: Date.now(),
       };
 
-      this.dbService.user.update({
+      return this.dbService.user.update({
         where: { id: updated.id },
         data: updated,
       });
-
-      return updated;
     }
   }
 
   async remove(id: string) {
     const user = await this.findOne(id);
-    this.dbService.user.delete({ where: { id: user.id } });
-    return user;
+    return this.dbService.user.delete({ where: { id: user.id } });
   }
 }

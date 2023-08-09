@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
-import { v4 as uuid } from 'uuid';
 import { DatabaseService } from '../database/database.service';
 
 @Injectable()
@@ -9,12 +8,8 @@ export class AlbumService {
   constructor(private dbService: DatabaseService) {}
 
   create(createAlbumDto: CreateAlbumDto) {
-    const album = {
-      ...createAlbumDto,
-      id: uuid(),
-    };
-    this.dbService.album.create({ data: album });
-    return album;
+    // todo: check if artist exist
+    return this.dbService.album.create({ data: createAlbumDto });
   }
 
   findAll() {
@@ -25,7 +20,7 @@ export class AlbumService {
     const album = await this.dbService.album.findUnique({
       where: { id: id },
     });
-    if (album === undefined) {
+    if (!album) {
       throw new NotFoundException();
     } else {
       return album;
@@ -38,18 +33,15 @@ export class AlbumService {
       ...album,
       ...updateAlbumDto,
     };
-    this.dbService.album.update({
+
+    return this.dbService.album.update({
       where: { id: album.id },
       data: updated,
     });
-    return updated;
   }
 
   async remove(id: string) {
     const album = await this.findOne(id);
-    this.dbService.album.delete({
-      where: { id: album.id },
-    }); // todo: cascade in schema
 
     // // change album id to null in all tracks
     // const tracks = await this.dbService.getAllTracks();
@@ -61,6 +53,8 @@ export class AlbumService {
     // // remove album from favs
     // this.dbService.removeAlbumFromFavorites(id);
 
-    return album;
+    return this.dbService.album.delete({
+      where: { id: album.id },
+    }); // todo: cascade in schema
   }
 }

@@ -7,21 +7,13 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DatabaseService } from '../database/database.service';
 import { Artist } from '../entities';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class ArtistService {
   constructor(private dbService: DatabaseService) {}
 
   create(createArtistDto: CreateArtistDto) {
-    const artist = {
-      ...createArtistDto,
-      id: uuid(),
-    };
-
-    this.dbService.artist.create({ data: artist });
-
-    return artist;
+    return this.dbService.artist.create({ data: createArtistDto });
   }
 
   findAll() {
@@ -33,7 +25,7 @@ export class ArtistService {
       where: { id: id },
     });
 
-    if (artist === undefined) {
+    if (!artist) {
       throw new NotFoundException();
     }
 
@@ -49,17 +41,15 @@ export class ArtistService {
       ...updateArtistDto,
     };
 
-    this.dbService.artist.update({
+    return this.dbService.artist.update({
       where: { id: updated.id },
       data: updated,
     });
-
-    return updated;
   }
 
   async remove(id: string) {
     const artist = await this.findOne(id);
-    this.dbService.artist.delete({
+    return this.dbService.artist.delete({
       where: { id: artist.id },
     }); // todo: cascade in schema
 
@@ -79,7 +69,5 @@ export class ArtistService {
     //
     // // remove artist from favs
     // this.dbService.removeArtistFromFavorites(id);
-
-    return artist;
   }
 }
