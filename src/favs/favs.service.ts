@@ -6,7 +6,23 @@ export class FavsService {
   constructor(private dbService: DatabaseService) {}
 
   async sessionUser() {
-    return await this.dbService.user.findFirst({});
+    // fixme: remove after auth implementation
+    const user = await this.dbService.user.findFirst({});
+
+    if (user) {
+      return user;
+    }
+
+    return this.dbService.user.create({
+      data: {
+        login: 'fakeSessionUser',
+        password: 'qwerty',
+        version: 1,
+        favAlbum: [],
+        favArtist: [],
+        favTrack: [],
+      },
+    });
   }
 
   async findAll() {

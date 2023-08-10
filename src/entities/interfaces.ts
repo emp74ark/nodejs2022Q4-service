@@ -5,6 +5,9 @@ export interface User {
   version: number; // integer number, increments on update
   createdAt: Date; // timestamp of creation
   updatedAt: Date; // timestamp of last update
+  favArtist: string[];
+  favAlbum: string[];
+  favTrack: string[];
 }
 
 export interface Artist {

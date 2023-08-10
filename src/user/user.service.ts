@@ -34,6 +34,9 @@ export class UserService {
         login: createUserDto.login,
         password: createUserDto.password,
         version: 1,
+        favAlbum: [],
+        favArtist: [],
+        favTrack: [],
       },
     });
   }
