@@ -3,5 +3,5 @@
 node_modules/
 test/
 .dockerignore
-.env.example
+.env
 *.md

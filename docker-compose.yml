@@ -1,36 +1,36 @@
 name: rs-library
 services:
-  postgres:
-    image: emp74ark/rs-library-prod-postgres:latest
+  postgres-service:
+    container_name: postgres
+    image: emp74ark/rs-library-prod-postgres-service:latest
     restart: always
     environment:
       - POSTGRES_PASSWORD=${PG_PSW}
     networks:
-      - server
+      - rs-net
     ports:
       - ${PG_PORT}:${PG_PORT}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-  backend:
-    image: emp74ark/rs-library-prod-backend:latest
+  backend-service:
+    container_name: backend
+    image: emp74ark/rs-library-prod-backend-service:latest
     environment:
-      - HOST=${HOST}
+      - HOST=backend
       - PORT=${PORT}
       - PG_HOST=postgres
       - PG_PORT=${PG_PORT}
-      - PG_DB=rs-library
-      - PG_USER=postgres
+      - PG_DB=${PG_DB}
+      - PG_USER=${PG_USER}
       - PG_PSW=${PG_PSW}
     restart: always
     networks:
-      - server
-      - client
+      - rs-net
     ports:
       - ${PORT}:${PORT}
     depends_on:
-      - postgres
+      - postgres-service
 networks:
-  client: {}
-  server: {}
+  rs-net: {}
 volumes:
   postgres-data: {}
