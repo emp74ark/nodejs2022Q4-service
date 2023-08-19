@@ -1,4 +1,4 @@
-enum Color {
+export enum Color {
   Reset = '\x1b[0m',
   Bright = '\x1b[1m',
   Dim = '\x1b[2m',
