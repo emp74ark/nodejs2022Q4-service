@@ -2,12 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { DatabaseService } from '../database/database.service';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class AlbumService {
+  private logger = new LoggerService(AlbumService.name);
+
   constructor(private dbService: DatabaseService) {}
 
   async create(createAlbumDto: CreateAlbumDto) {
+    this.logger.debug('create');
     const artist = createAlbumDto.artistId
       ? await this.dbService.artist.findUnique({
           where: { id: createAlbumDto.artistId },
@@ -22,10 +26,12 @@ export class AlbumService {
   }
 
   findAll() {
+    this.logger.debug('findAll');
     return this.dbService.album.findMany({});
   }
 
   async findOne(id: string) {
+    this.logger.debug(`findOne: ${id}`);
     const album = await this.dbService.album.findUnique({
       where: { id: id },
     });
@@ -37,6 +43,7 @@ export class AlbumService {
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    this.logger.debug(`update: ${id}`);
     const album = await this.findOne(id);
     const updated = {
       ...album,
@@ -50,20 +57,10 @@ export class AlbumService {
   }
 
   async remove(id: string) {
+    this.logger.debug(`remove: ${id}`);
     const album = await this.findOne(id);
-
-    // // change album id to null in all tracks
-    // const tracks = await this.dbService.getAllTracks();
-    // const filtered = tracks.filter((track) => track.albumId === id);
-    // filtered.forEach((track) => {
-    //   this.dbService.updateTrack({ ...track, albumId: null });
-    // });
-    //
-    // // remove album from favs
-    // this.dbService.removeAlbumFromFavorites(id);
-
     return this.dbService.album.delete({
       where: { id: album.id },
-    }); // todo: cascade in schema
+    });
   }
 }

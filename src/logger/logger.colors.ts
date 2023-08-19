@@ -26,14 +26,10 @@ enum Color {
   BgGray = '\x1b[100m',
 }
 
-export const logLevel = {
+export const colorizedLevel = {
   log: `${Color.FgGreen}[LOG]${Color.Reset}\t`,
   warn: `${Color.FgYellow}[WARN]${Color.Reset}\t`,
   error: `${Color.FgRed}[ERR]${Color.Reset}\t`,
-};
-
-export const logDate = `${new Date().toLocaleString()}\t`;
-
-export const logContext = (context: string) => {
-  return `[${Color.FgMagenta}${context.trim()}${Color.Reset}]\t`;
+  debug: `${Color.FgBlue}[DEBUG]${Color.Reset}\t`,
+  net: `${Color.FgCyan}[NET]${Color.Reset}\t`,
 };

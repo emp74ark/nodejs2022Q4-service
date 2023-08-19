@@ -1,21 +1,25 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
-import { logContext, logDate, logLevel } from './logger.components';
+import { ConsoleLogger, Injectable, LogLevel } from '@nestjs/common';
+import { colorizedLevel } from './logger.colors';
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
-  log(message: any, context?: string) {
-    // super.log(message, context);
-    console.log(logLevel.log, logDate, logContext(context), message);
+  protected formatPid(pid: number) {
+    return `${pid}`;
   }
 
-  warn(message: any, context?: string) {
-    // super.warn(message, context);
-    console.log(logLevel.warn, logDate, logContext(context), message);
+  protected stringifyMessage(message: unknown, logLevel: LogLevel) {
+    return `${message}`;
   }
 
-  error(message: any, stack?: string, context?: string) {
-    // super.error(message, stack, context);
-    console.log(logLevel.error, logDate, logContext(context), message);
-    console.log('[ERROR STACK]:\n', stack);
+  protected formatMessage(
+    logLevel: LogLevel,
+    message: unknown,
+    pidMessage: string,
+    formattedLogLevel: string,
+    contextMessage: string,
+    timestampDiff: string,
+  ): string {
+    const level = colorizedLevel[logLevel] ?? `[${logLevel.toUpperCase()}]\t`;
+    return `${level}${this.getTimestamp()}\t${contextMessage}\t${message}\n`;
   }
 }

@@ -1,8 +1,11 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class FavsService {
+  private logger = new LoggerService(FavsService.name);
+
   constructor(private dbService: DatabaseService) {}
 
   async sessionUser() {
@@ -26,6 +29,7 @@ export class FavsService {
   }
 
   async findAll() {
+    this.logger.debug('findAll');
     const user = await this.sessionUser();
 
     const tracks = await this.dbService.track.findMany({
@@ -44,6 +48,7 @@ export class FavsService {
   }
 
   async addTrack(id: string) {
+    this.logger.debug(`addTrack: ${id}`);
     const user = await this.sessionUser();
 
     const track = await this.dbService.track.findUnique({
@@ -66,6 +71,7 @@ export class FavsService {
   }
 
   async removeTrack(id: string) {
+    this.logger.debug(`removeTrack: ${id}`);
     const user = await this.sessionUser();
     const favTrack = user.favTrack.filter((track) => track !== id);
     return this.dbService.user.update({
@@ -75,6 +81,7 @@ export class FavsService {
   }
 
   async addAlbum(id: string) {
+    this.logger.debug(`addAlbum: ${id}`);
     const user = await this.sessionUser();
 
     const album = await this.dbService.album.findUnique({
@@ -97,6 +104,7 @@ export class FavsService {
   }
 
   async removeAlbum(id: string) {
+    this.logger.debug(`removeAlbum: ${id}`);
     const user = await this.sessionUser();
     const favAlbum = user.favAlbum.filter((album) => album !== id);
     return this.dbService.user.update({
@@ -106,6 +114,7 @@ export class FavsService {
   }
 
   async addArtist(id: string) {
+    this.logger.debug(`addArtist: ${id}`);
     const user = await this.sessionUser();
 
     const artist = await this.dbService.artist.findUnique({
@@ -128,6 +137,7 @@ export class FavsService {
   }
 
   async removeArtist(id: string) {
+    this.logger.debug(`removeArtist: ${id}`);
     const user = await this.sessionUser();
     const favArtist = user.favArtist.filter((artist) => artist !== id);
     return this.dbService.user.update({

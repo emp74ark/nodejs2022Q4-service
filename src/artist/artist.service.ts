@@ -7,20 +7,26 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { DatabaseService } from '../database/database.service';
 import { Artist } from '../entities';
+import { LoggerService } from '../logger/logger.service';
 
 @Injectable()
 export class ArtistService {
+  private logger = new LoggerService(ArtistService.name);
+
   constructor(private dbService: DatabaseService) {}
 
   create(createArtistDto: CreateArtistDto) {
+    this.logger.debug('create');
     return this.dbService.artist.create({ data: createArtistDto });
   }
 
   findAll() {
+    this.logger.debug('findAll');
     return this.dbService.artist.findMany({});
   }
 
   async findOne(id: string) {
+    this.logger.debug(`findOne: ${id}`);
     const artist = await this.dbService.artist.findUnique({
       where: { id: id },
     });
@@ -33,6 +39,7 @@ export class ArtistService {
   }
 
   async update(id: string, updateArtistDto: UpdateArtistDto) {
+    this.logger.debug(`update: ${id}`);
     if (!id) throw new BadRequestException();
     const artist = await this.findOne(id);
 
@@ -48,26 +55,10 @@ export class ArtistService {
   }
 
   async remove(id: string) {
+    this.logger.debug(`remove: ${id}`);
     const artist = await this.findOne(id);
     return this.dbService.artist.delete({
       where: { id: artist.id },
-    }); // todo: cascade in schema
-
-    // // change artist id to null in all tracks
-    // const tracks = await this.dbService.getAllTracks();
-    // const filteredTracks = tracks.filter((track) => track.artistId === id);
-    // filteredTracks.forEach((track) => {
-    //   this.dbService.updateTrack({ ...track, artistId: null });
-    // });
-    //
-    // // change album id to null in all tracks
-    // const albums = await this.dbService.getAllAlbums();
-    // const filteredAlbums = albums.filter((album) => album.artistId === id);
-    // filteredAlbums.forEach((album) => {
-    //   this.dbService.updateAlbum({ ...album, artistId: null });
-    // });
-    //
-    // // remove artist from favs
-    // this.dbService.removeArtistFromFavorites(id);
+    });
   }
 }
