@@ -39,15 +39,13 @@ export class AuthService {
 
     const payload = { sub: user.id, login: user.login };
 
-    return { access_token: await this.jwtService.signAsync(payload) };
+    return { accessToken: await this.jwtService.signAsync(payload) };
   }
 
   async signUp(dto: SignupAuthDto) {
-    this.logger.debug(`signUp: ${dto.login}`);
+    this.logger.debug(`signUp: ${dto.id}`);
 
-    const payload = { sub: dto.id, login: dto.login };
-
-    return { access_token: await this.jwtService.signAsync(payload) };
+    return { id: dto.id };
   }
 
   async refresh(dto: RefreshAuthDto) {
