@@ -14,8 +14,11 @@ git clone https://github.com/emp74ark/nodejs2022Q4-service
 ## Switch to task branch
 
 ```
-git checkout dev_p2
+git checkout dev_p3
 ```
+
+Rename .env.example to .env and change variables accordings to your needs (TOKEN_EXPIRE_TIME variable is setted in
+seconds).
 
 ## Docker
 
@@ -60,6 +63,7 @@ docker compose --env-file .env -f docker-compose.dev.yml up -d
 ```
 
 For dev after docker images started run prisma migration script **manually**:
+
 ```bash
  npx prisma migrate dev --name init
 ```
@@ -84,12 +88,8 @@ docker logs --follow {contaier_name}
 
 ## Testing
 
-After application running open new terminal and enter:
-
-To run all tests without authorization
-
 ```
-npm run test
+npm run test:auth
 ```
 
 To run only one of all test suites
