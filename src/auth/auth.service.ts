@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshAuthDto } from './dto/refresh-auth.dto';
 import { SignupAuthDto } from './dto/signup-auth.dto';
 import { compare } from 'bcrypt';
+import { JWT_SECRET_KEY, TOKEN_EXPIRE_TIME } from '../entities';
 
 @Injectable()
 export class AuthService {
@@ -49,6 +50,19 @@ export class AuthService {
   }
 
   async refresh(dto: RefreshAuthDto) {
-    return dto;
+    try {
+      const { exp, sub, login } = await this.jwtService.verifyAsync(
+        dto.refreshToken,
+        {
+          secret: JWT_SECRET_KEY,
+        },
+      );
+
+      if (exp + TOKEN_EXPIRE_TIME < Date.now()) {
+        return { accessToken: await this.jwtService.signAsync({ sub, login }) };
+      }
+    } catch {
+      throw new ForbiddenException();
+    }
   }
 }
