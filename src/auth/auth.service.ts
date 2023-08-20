@@ -1,9 +1,15 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { LoggerService } from '../logger/logger.service';
 import { LoginAuthDto } from './dto/login-auth.dto';
-import { LogoutAuthDto } from './dto/logout-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RefreshAuthDto } from './dto/refresh-auth.dto';
+import { SignupAuthDto } from './dto/signup-auth.dto';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -21,18 +27,30 @@ export class AuthService {
       where: { login: dto.login },
     });
 
-    if (!user || user.password !== dto.password) {
+    if (!user) {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, login: user.login, version: user.version };
+    const pwdMatch = await compare(dto.password, user.password);
+
+    if (!pwdMatch) {
+      throw new ForbiddenException();
+    }
+
+    const payload = { sub: user.id, login: user.login };
 
     return { access_token: await this.jwtService.signAsync(payload) };
   }
 
-  async logOut(dto: LogoutAuthDto) {
-    this.logger.debug(`logOut: ${dto.login}`);
+  async signUp(dto: SignupAuthDto) {
+    this.logger.debug(`signUp: ${dto.login}`);
 
-    return 'logout';
+    const payload = { sub: dto.id, login: dto.login };
+
+    return { access_token: await this.jwtService.signAsync(payload) };
+  }
+
+  async refresh(dto: RefreshAuthDto) {
+    return dto;
   }
 }
