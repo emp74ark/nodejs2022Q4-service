@@ -10,6 +10,7 @@ import { FavsModule } from './favs/favs.module';
 import { LoggerModule } from './logger/logger.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     FavsModule,
     LoggerModule,
     EventEmitterModule.forRoot(),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
