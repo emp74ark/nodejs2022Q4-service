@@ -25,6 +25,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Home Library Service')
     .setDescription('Home music library service')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('doc', app, document);

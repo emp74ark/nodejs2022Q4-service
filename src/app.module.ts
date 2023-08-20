@@ -11,6 +11,7 @@ import { LoggerModule } from './logger/logger.module';
 import { LoggerMiddleware } from './logger/logger.middleware';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { AuthModule } from './auth/auth.module';
+import { AppJwtModule } from './auth/app-jwt.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuthModule } from './auth/auth.module';
     LoggerModule,
     EventEmitterModule.forRoot(),
     AuthModule,
+    AppJwtModule,
   ],
   controllers: [AppController],
   providers: [AppService],
