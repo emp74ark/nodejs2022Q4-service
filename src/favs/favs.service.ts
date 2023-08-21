@@ -8,29 +8,11 @@ export class FavsService {
 
   constructor(private dbService: DatabaseService) {}
 
-  async sessionUser() {
-    // fixme: remove after auth implementation
-    const user = await this.dbService.user.findFirst({});
-
-    if (user) {
-      return user;
-    }
-
-    return this.dbService.user.create({
-      data: {
-        login: 'fakeSessionUser',
-        password: 'qwerty',
-        version: 1,
-        favAlbum: [],
-        favArtist: [],
-        favTrack: [],
-      },
-    });
-  }
-
-  async findAll() {
+  async findAll(userId: string) {
     this.logger.debug('findAll');
-    const user = await this.sessionUser();
+    const user = await this.dbService.user.findUnique({
+      where: { id: userId },
+    });
 
     const tracks = await this.dbService.track.findMany({
       where: { id: { in: user.favTrack } },
@@ -47,9 +29,11 @@ export class FavsService {
     return { tracks, albums, artists };
   }
 
-  async addTrack(id: string) {
+  async addTrack(userId: string, id: string) {
     this.logger.debug(`addTrack: ${id}`);
-    const user = await this.sessionUser();
+    const user = await this.dbService.user.findUnique({
+      where: { id: userId },
+    });
 
     const track = await this.dbService.track.findUnique({
       where: { id },
@@ -70,9 +54,12 @@ export class FavsService {
     throw new UnprocessableEntityException();
   }
 
-  async removeTrack(id: string) {
+  async removeTrack(userId: string, id: string) {
     this.logger.debug(`removeTrack: ${id}`);
-    const user = await this.sessionUser();
+    const user = await this.dbService.user.findUnique({
+      where: { id: userId },
+    });
+
     const favTrack = user.favTrack.filter((track) => track !== id);
     return this.dbService.user.update({
       where: { id: user.id },
@@ -80,9 +67,11 @@ export class FavsService {
     });
   }
 
-  async addAlbum(id: string) {
+  async addAlbum(userId: string, id: string) {
     this.logger.debug(`addAlbum: ${id}`);
-    const user = await this.sessionUser();
+    const user = await this.dbService.user.findUnique({
+      where: { id: userId },
+    });
 
     const album = await this.dbService.album.findUnique({
       where: { id },
@@ -103,9 +92,12 @@ export class FavsService {
     throw new UnprocessableEntityException();
   }
 
-  async removeAlbum(id: string) {
+  async removeAlbum(userId: string, id: string) {
     this.logger.debug(`removeAlbum: ${id}`);
-    const user = await this.sessionUser();
+    const user = await this.dbService.user.findUnique({
+      where: { id: userId },
+    });
+
     const favAlbum = user.favAlbum.filter((album) => album !== id);
     return this.dbService.user.update({
       where: { id: user.id },
@@ -113,9 +105,11 @@ export class FavsService {
     });
   }
 
-  async addArtist(id: string) {
+  async addArtist(userId: string, id: string) {
     this.logger.debug(`addArtist: ${id}`);
-    const user = await this.sessionUser();
+    const user = await this.dbService.user.findUnique({
+      where: { id: userId },
+    });
 
     const artist = await this.dbService.artist.findUnique({
       where: { id },
@@ -136,9 +130,12 @@ export class FavsService {
     throw new UnprocessableEntityException();
   }
 
-  async removeArtist(id: string) {
+  async removeArtist(userId: string, id: string) {
     this.logger.debug(`removeArtist: ${id}`);
-    const user = await this.sessionUser();
+    const user = await this.dbService.user.findUnique({
+      where: { id: userId },
+    });
+
     const favArtist = user.favArtist.filter((artist) => artist !== id);
     return this.dbService.user.update({
       where: { id: user.id },

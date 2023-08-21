@@ -23,6 +23,21 @@ export class LoggerService extends ConsoleLogger {
     return `${level}${this.getTimestamp()}\t${contextMessage}\t${message}\n`;
   }
 
+  log(message: any, context?: string) {
+    super.log(message, context);
+    // todo: write file
+  }
+
+  warn(message: any, context?: string) {
+    super.warn(message, context);
+    // todo: write file
+  }
+
+  error(message: any, stack?: string, context?: string) {
+    super.error(message, stack, context);
+    // todo: write file
+  }
+
   net(
     type: 'Request' | 'Response',
     method: string,
@@ -32,6 +47,7 @@ export class LoggerService extends ConsoleLogger {
     remoteAddress: string,
     statusCode?: number,
   ) {
+    // todo: write to file
     console.log(
       colorizedLevel.net,
       this.getTimestamp(),

@@ -8,46 +8,65 @@ import {
   Post,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
+import { AuthUser } from '../auth/auth-user.decorator';
 
 @Controller('favs')
 export class FavsController {
   constructor(private readonly favService: FavsService) {}
 
   @Get()
-  findAll() {
-    return this.favService.findAll();
+  findAll(@AuthUser() user: string) {
+    return this.favService.findAll(user);
   }
 
   @Post('/track/:id')
-  addTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.favService.addTrack(id);
+  addTrack(
+    @AuthUser() user: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favService.addTrack(user, id);
   }
 
   @Delete('/track/:id')
   @HttpCode(204)
-  removeTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.favService.removeTrack(id);
+  removeTrack(
+    @AuthUser() user: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favService.removeTrack(user, id);
   }
 
   @Post('/album/:id')
-  addAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.favService.addAlbum(id);
+  addAlbum(
+    @AuthUser() user: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favService.addAlbum(user, id);
   }
 
   @Delete('/album/:id')
   @HttpCode(204)
-  removeAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.favService.removeAlbum(id);
+  removeAlbum(
+    @AuthUser() user: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favService.removeAlbum(user, id);
   }
 
   @Post('/artist/:id')
-  addArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.favService.addArtist(id);
+  addArtist(
+    @AuthUser() user: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favService.addArtist(user, id);
   }
 
   @Delete('/artist/:id')
   @HttpCode(204)
-  removeArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
-    return this.favService.removeArtist(id);
+  removeArtist(
+    @AuthUser() user: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ) {
+    return this.favService.removeArtist(user, id);
   }
 }
